@@ -1,14 +1,15 @@
 package main
 
 import (
-	"github.com/TheOnly92/fontstash.go/truetype"
 	"fmt"
+	"github.com/gonutz/fontstash.go/truetype"
 	"io/ioutil"
 	"math"
+	"path/filepath"
 )
 
 func main() {
-	data, err := ioutil.ReadFile("ClearSans-Regular.ttf")
+	data, err := ioutil.ReadFile(filepath.Join("..", "ClearSans-Regular.ttf"))
 	if err != nil {
 		panic(err)
 	}

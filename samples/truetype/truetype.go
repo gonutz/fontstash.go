@@ -1,18 +1,20 @@
 package main
 
 import (
-	"github.com/TheOnly92/fontstash.go/truetype"
-	"github.com/go-gl/gl"
-	glfw "github.com/go-gl/glfw3"
+	"github.com/go-gl/gl/v2.1/gl"
+	"github.com/go-gl/glfw/v3.1/glfw"
+	"github.com/gonutz/fontstash.go/truetype"
 	"io/ioutil"
+	"path/filepath"
 	"runtime"
+	"unsafe"
 )
 
 func main() {
 	runtime.LockOSThread()
 
-	if !glfw.Init() {
-		panic("Can't init glfw!")
+	if err := glfw.Init(); err != nil {
+		panic(err)
 	}
 	defer glfw.Terminate()
 
@@ -25,7 +27,7 @@ func main() {
 	glfw.SwapInterval(1)
 	gl.Init()
 
-	data, err := ioutil.ReadFile("ClearSans-Regular.ttf")
+	data, err := ioutil.ReadFile(filepath.Join("..", "ClearSans-Regular.ttf"))
 	if err != nil {
 		panic(err)
 	}
@@ -34,11 +36,13 @@ func main() {
 
 	tmpBitmap := make([]byte, 512*512)
 	cdata, err, _, tmpBitmap := truetype.BakeFontBitmap(data, 0, 32, tmpBitmap, 512, 512, 32, 96)
-	ftex := gl.GenTexture()
-	ftex.Bind(gl.TEXTURE_2D)
+	var ftex uint32
+	gl.GenTextures(1, &ftex)
+	gl.BindTexture(gl.TEXTURE_2D, ftex)
 	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
 	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
-	gl.TexImage2D(gl.TEXTURE_2D, 0, gl.ALPHA, 512, 512, 0, gl.ALPHA, gl.UNSIGNED_BYTE, tmpBitmap)
+	gl.TexImage2D(gl.TEXTURE_2D, 0, gl.ALPHA, 512, 512, 0,
+		gl.ALPHA, gl.UNSIGNED_BYTE, unsafe.Pointer(&tmpBitmap[0]))
 
 	gl.ClearColor(0.3, 0.3, 0.32, 1.)
 
@@ -61,9 +65,9 @@ func main() {
 	}
 }
 
-func my_print(x, y float64, text string, ftex gl.Texture, cdata []*truetype.BakedChar) {
+func my_print(x, y float64, text string, ftex uint32, cdata []*truetype.BakedChar) {
 	gl.Enable(gl.TEXTURE_2D)
-	ftex.Bind(gl.TEXTURE_2D)
+	gl.BindTexture(gl.TEXTURE_2D, ftex)
 	gl.Begin(gl.QUADS)
 	for _, b := range text {
 		if int(b) >= 32 && int(b) < 128 {

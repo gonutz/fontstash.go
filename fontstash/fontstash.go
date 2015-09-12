@@ -1,11 +1,12 @@
 package fontstash
 
 import (
-	"github.com/TheOnly92/fontstash.go/truetype"
-	"github.com/go-gl/gl"
+	"github.com/go-gl/gl/v2.1/gl"
+	"github.com/gonutz/fontstash.go/truetype"
 	"io/ioutil"
 	"math"
 	"unicode/utf8"
+	"unsafe"
 )
 
 const (
@@ -52,7 +53,7 @@ type Row struct {
 }
 
 type Texture struct {
-	id     gl.Texture
+	id     uint32
 	rows   []*Row
 	verts  [VERT_COUNT * 4]float32
 	nverts int
@@ -101,9 +102,10 @@ func Create(cachew, cacheh int) *Stash {
 	gl.Enable(gl.TEXTURE_2D)
 	stash.ttTextures = make([]*Texture, 1)
 	stash.ttTextures[0] = &Texture{}
-	stash.ttTextures[0].id = gl.GenTexture()
-	stash.ttTextures[0].id.Bind(gl.TEXTURE_2D)
-	gl.TexImage2D(gl.TEXTURE_2D, 0, gl.ALPHA, cachew, cacheh, 0, gl.ALPHA, gl.UNSIGNED_BYTE, stash.emptyData)
+	gl.GenTextures(1, &stash.ttTextures[0].id)
+	gl.BindTexture(gl.TEXTURE_2D, stash.ttTextures[0].id)
+	gl.TexImage2D(gl.TEXTURE_2D, 0, gl.ALPHA, int32(cachew), int32(cacheh),
+		0, gl.ALPHA, gl.UNSIGNED_BYTE, unsafe.Pointer(&stash.emptyData[0]))
 	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
 	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
 	gl.Disable(gl.TEXTURE_2D)
@@ -222,9 +224,12 @@ func (stash *Stash) GetGlyph(fnt *Font, codepoint int, isize int16) *Glyph {
 						// Create new texture
 						gl.Enable(gl.TEXTURE_2D)
 						texture = &Texture{}
-						texture.id = gl.GenTexture()
-						texture.id.Bind(gl.TEXTURE_2D)
-						gl.TexImage2D(gl.TEXTURE_2D, 0, gl.ALPHA, stash.tw, stash.th, 0, gl.ALPHA, gl.UNSIGNED_BYTE, stash.emptyData)
+						gl.GenTextures(1, &texture.id)
+						gl.BindTexture(gl.TEXTURE_2D, texture.id)
+						gl.TexImage2D(gl.TEXTURE_2D, 0, gl.ALPHA,
+							int32(stash.tw), int32(stash.th), 0,
+							gl.ALPHA, gl.UNSIGNED_BYTE,
+							unsafe.Pointer(&stash.emptyData[0]))
 						gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
 						gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
 						gl.Disable(gl.TEXTURE_2D)
@@ -272,9 +277,11 @@ func (stash *Stash) GetGlyph(fnt *Font, codepoint int, isize int16) *Glyph {
 	if len(bmp) > 0 {
 		gl.Enable(gl.TEXTURE_2D)
 		// Update texture
-		texture.id.Bind(gl.TEXTURE_2D)
+		gl.BindTexture(gl.TEXTURE_2D, texture.id)
 		gl.PixelStorei(gl.UNPACK_ALIGNMENT, 1)
-		gl.TexSubImage2D(gl.TEXTURE_2D, 0, glyph.x0, glyph.y0, gw, gh, gl.ALPHA, gl.UNSIGNED_BYTE, bmp)
+		gl.TexSubImage2D(gl.TEXTURE_2D, 0, int32(glyph.x0), int32(glyph.y0),
+			int32(gw), int32(gh), gl.ALPHA, gl.UNSIGNED_BYTE,
+			unsafe.Pointer(&bmp[0]))
 		gl.Disable(gl.TEXTURE_2D)
 	}
 
@@ -315,7 +322,7 @@ func (stash *Stash) FlushDraw() {
 	for {
 		if texture.nverts > 0 {
 			gl.Enable(gl.TEXTURE_2D)
-			texture.id.Bind(gl.TEXTURE_2D)
+			gl.BindTexture(gl.TEXTURE_2D, texture.id)
 			for k := 0; k < texture.nverts; k++ {
 				gl.Begin(gl.QUADS)
 				gl.TexCoord2f(texture.verts[k*4+2], texture.verts[k*4+3])

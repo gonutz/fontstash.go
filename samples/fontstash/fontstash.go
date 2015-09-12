@@ -1,17 +1,18 @@
 package main
 
 import (
-	"github.com/TheOnly92/fontstash.go/fontstash"
-	"github.com/go-gl/gl"
-	glfw "github.com/go-gl/glfw3"
+	"github.com/go-gl/gl/v2.1/gl"
+	"github.com/go-gl/glfw/v3.1/glfw"
+	"github.com/gonutz/fontstash.go/fontstash"
+	"path/filepath"
 	"runtime"
 )
 
 func main() {
 	runtime.LockOSThread()
 
-	if !glfw.Init() {
-		panic("Can't init glfw!")
+	if err := glfw.Init(); err != nil {
+		panic(err)
 	}
 	defer glfw.Terminate()
 
@@ -26,22 +27,22 @@ func main() {
 
 	stash := fontstash.Create(512, 512)
 
-	clearSansRegular, err := stash.AddFont("ClearSans-Regular.ttf")
+	clearSansRegular, err := stash.AddFont(filepath.Join("..", "ClearSans-Regular.ttf"))
 	if err != nil {
 		panic(err)
 	}
 
-	clearSansItalic, err := stash.AddFont("ClearSans-Italic.ttf")
+	clearSansItalic, err := stash.AddFont(filepath.Join("..", "ClearSans-Italic.ttf"))
 	if err != nil {
 		panic(err)
 	}
 
-	clearSansBold, err := stash.AddFont("ClearSans-Bold.ttf")
+	clearSansBold, err := stash.AddFont(filepath.Join("..", "ClearSans-Bold.ttf"))
 	if err != nil {
 		panic(err)
 	}
 
-	droidJapanese, err := stash.AddFont("DroidSansJapanese.ttf")
+	droidJapanese, err := stash.AddFont(filepath.Join("..", "DroidSansJapanese.ttf"))
 	if err != nil {
 		panic(err)
 	}

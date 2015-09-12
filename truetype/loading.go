@@ -1,8 +1,6 @@
 package truetype
 
-import (
-	"errors"
-)
+import "errors"
 
 // FontInfo is defined publically so you can declare on on the stack or as a
 // global or etc, but you should treat it as opaque.
