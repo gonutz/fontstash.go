@@ -7,7 +7,7 @@ import (
 )
 
 type BakedChar struct {
-	x0, y0, x1, y1       uint16 // coordinates of bbox in bitmap
+	x0, y0, x1, y1       uint16 // coordinates of bounding box in bitmap
 	xoff, yoff, xadvance float64
 }
 
@@ -48,7 +48,8 @@ func GetBakedQuad(chardata []*BakedChar, pw, ph, charIndex int, xpos, ypos float
 }
 
 // offset is the font location (use offset=0 for plain .ttf), pixelHeight is the height of font in pixels. pixels is the bitmap to be filled in characters to bake. This uses a very crappy packing.
-func BakeFontBitmap(data []byte, offset int, pixelHeight float64, pixels []byte, pw, ph, firstChar, numChars int) (chardata []*BakedChar, err error, bottomY int, rtPixels []byte) {
+func BakeFontBitmap(data []byte, offset int, pixelHeight float64, pixels []byte,
+	pw, ph, firstChar, numChars int) (chardata []*BakedChar, err error, bottomY int, rtPixels []byte) {
 	f, err := InitFont(data, offset)
 	if err != nil {
 		return

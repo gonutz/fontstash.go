@@ -25,7 +25,7 @@ func main() {
 	glfw.SwapInterval(1)
 	gl.Init()
 
-	stash := fontstash.Create(512, 512)
+	stash := fontstash.New(512, 512)
 
 	clearSansRegular, err := stash.AddFont(filepath.Join("..", "ClearSans-Regular.ttf"))
 	if err != nil {

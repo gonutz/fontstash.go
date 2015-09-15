@@ -34,6 +34,7 @@ type Stash struct {
 	bmTextures []*Texture
 	fonts      []*Font
 	drawing    bool
+	yInverted  bool
 }
 
 type Font struct {
@@ -88,7 +89,7 @@ func hashint(a uint) uint {
 	return a
 }
 
-func Create(cachew, cacheh int) *Stash {
+func New(cachew, cacheh int) *Stash {
 	stash := &Stash{}
 
 	// Create data for clearing the textures
@@ -288,6 +289,10 @@ func (stash *Stash) GetGlyph(fnt *Font, codepoint int, isize int16) *Glyph {
 	return glyph
 }
 
+func (stash *Stash) SetYInverted(inverted bool) {
+	stash.yInverted = inverted
+}
+
 func (stash *Stash) GetQuad(fnt *Font, glyph *Glyph, isize int16, x, y float64) (float64, float64, *Quad) {
 	q := &Quad{}
 	scale := float64(1)
@@ -308,6 +313,12 @@ func (stash *Stash) GetQuad(fnt *Font, glyph *Glyph, isize int16, x, y float64) 
 	q.t0 = float32(float64(glyph.y0) * stash.ith)
 	q.s1 = float32(float64(glyph.x1) * stash.itw)
 	q.t1 = float32(float64(glyph.y1) * stash.ith)
+
+	if stash.yInverted {
+		yOffset := float32(2 * y)
+		q.y0 = yOffset - q.y0
+		q.y1 = yOffset - q.y1
+	}
 
 	x += scale * glyph.xadv
 
@@ -423,7 +434,7 @@ func (stash *Stash) GetAdvance(idx int, size float64, s string) float64 {
 	return x
 }
 
-func (stash *Stash) DrawText(idx int, size, x, y float64, s string) (dx float64) {
+func (stash *Stash) DrawText(idx int, size, x, y float64, s string) (nextX float64) {
 	isize := int16(size * 10)
 
 	var fnt *Font
