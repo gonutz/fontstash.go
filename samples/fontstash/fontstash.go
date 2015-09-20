@@ -76,26 +76,26 @@ func main() {
 
 		dx := sx
 		dy := sy
-		dx = stash.DrawText(clearSansRegular, 24, dx, dy, "The quick ")
-		dx = stash.DrawText(clearSansItalic, 48, dx, dy, "brown ")
-		dx = stash.DrawText(clearSansRegular, 24, dx, dy, "fox ")
+		dx = stash.DrawText(clearSansRegular, 24, dx, dy, "The quick ", [4]float32{0, 0, 0, 1})
+		dx = stash.DrawText(clearSansItalic, 48, dx, dy, "brown ", [4]float32{1, 1, 0.5, 1})
+		dx = stash.DrawText(clearSansRegular, 24, dx, dy, "fox ", [4]float32{0, 1, 0.5, 1})
 		_, _, lh := stash.VMetrics(clearSansItalic, 24)
 		dx = sx
 		dy -= lh * 1.2
-		dx = stash.DrawText(clearSansItalic, 24, dx, dy, "jumps over ")
-		dx = stash.DrawText(clearSansBold, 24, dx, dy, "the lazy ")
-		dx = stash.DrawText(clearSansRegular, 24, dx, dy, "dog.")
+		dx = stash.DrawText(clearSansItalic, 24, dx, dy, "jumps over ", [4]float32{0, 1, 1, 1})
+		dx = stash.DrawText(clearSansBold, 24, dx, dy, "the lazy ", [4]float32{1, 0, 1, 1})
+		dx = stash.DrawText(clearSansRegular, 24, dx, dy, "dog.", [4]float32{0, 1, 0, 1})
 		dx = sx
 		dy -= lh * 1.2
-		dx = stash.DrawText(clearSansRegular, 12, dx, dy, "Now is the time for all good men to come to the aid of the party.")
+		dx = stash.DrawText(clearSansRegular, 12, dx, dy, "Now is the time for all good men to come to the aid of the party.", [4]float32{0, 0, 1, 1})
 		_, _, lh = stash.VMetrics(clearSansItalic, 12)
 		dx = sx
 		dy -= lh * 1.2 * 2
-		dx = stash.DrawText(clearSansItalic, 18, dx, dy, "Ég get etið gler án þess að meiða mig.")
+		dx = stash.DrawText(clearSansItalic, 18, dx, dy, "Ég get etið gler án þess að meiða mig.", [4]float32{1, 0, 0, 1})
 		_, _, lh = stash.VMetrics(clearSansItalic, 18)
 		dx = sx
 		dy -= lh * 1.2
-		stash.DrawText(droidJapanese, 18, dx, dy, "どこかに置き忘れた、サングラスと打ち明け話。")
+		stash.DrawText(droidJapanese, 18, dx, dy, "どこかに置き忘れた、サングラスと打ち明け話。", [4]float32{1, 1, 1, 1})
 
 		stash.EndDraw()
 		gl.Enable(gl.DEPTH_TEST)
