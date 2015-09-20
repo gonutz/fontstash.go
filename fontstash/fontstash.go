@@ -57,6 +57,7 @@ type Texture struct {
 	id     uint32
 	rows   []*Row
 	verts  [VERT_COUNT * 4]float32
+	color  [4]float32
 	nverts int
 }
 
@@ -326,25 +327,28 @@ func (stash *Stash) GetQuad(fnt *Font, glyph *Glyph, isize int16, x, y float64) 
 }
 
 func (stash *Stash) FlushDraw() {
-	var i int
+	i := 0
 	texture := stash.ttTextures[i]
-	var tt bool
-	tt = true
+	tt := true
 	for {
 		if texture.nverts > 0 {
 			gl.Enable(gl.TEXTURE_2D)
 			gl.BindTexture(gl.TEXTURE_2D, texture.id)
 			for k := 0; k < texture.nverts; k++ {
 				gl.Begin(gl.QUADS)
+				gl.Color4fv(&texture.color[0])
 				gl.TexCoord2f(texture.verts[k*4+2], texture.verts[k*4+3])
 				gl.Vertex2f(texture.verts[k*4+0], texture.verts[k*4+1])
 				k++
+				gl.Color4fv(&texture.color[0])
 				gl.TexCoord2f(texture.verts[k*4+2], texture.verts[k*4+3])
 				gl.Vertex2f(texture.verts[k*4+0], texture.verts[k*4+1])
 				k++
+				gl.Color4fv(&texture.color[0])
 				gl.TexCoord2f(texture.verts[k*4+2], texture.verts[k*4+3])
 				gl.Vertex2f(texture.verts[k*4+0], texture.verts[k*4+1])
 				k++
+				gl.Color4fv(&texture.color[0])
 				gl.TexCoord2f(texture.verts[k*4+2], texture.verts[k*4+3])
 				gl.Vertex2f(texture.verts[k*4+0], texture.verts[k*4+1])
 				gl.End()
@@ -434,7 +438,7 @@ func (stash *Stash) GetAdvance(idx int, size float64, s string) float64 {
 	return x
 }
 
-func (stash *Stash) DrawText(idx int, size, x, y float64, s string) (nextX float64) {
+func (stash *Stash) DrawText(idx int, size, x, y float64, s string, color [4]float32) (nextX float64) {
 	isize := int16(size * 10)
 
 	var fnt *Font
@@ -462,6 +466,7 @@ func (stash *Stash) DrawText(idx int, size, x, y float64, s string) (nextX float
 			continue
 		}
 		texture := glyph.texture
+		texture.color = color
 		if texture.nverts*4 >= VERT_COUNT {
 			stash.FlushDraw()
 		}
