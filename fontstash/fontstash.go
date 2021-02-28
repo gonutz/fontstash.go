@@ -1,12 +1,14 @@
 package fontstash
 
 import (
-	"github.com/go-gl/gl/v2.1/gl"
-	"github.com/gonutz/fontstash.go/truetype"
 	"io/ioutil"
 	"math"
 	"unicode/utf8"
 	"unsafe"
+
+	"github.com/gonutz/gl/v2.1/gl"
+
+	"github.com/gonutz/fontstash.go/truetype"
 )
 
 const (

@@ -1,12 +1,13 @@
 package main
 
 import (
-	"github.com/gonutz/fontstash.go/truetype"
 	"image"
 	"image/png"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"github.com/gonutz/fontstash.go/truetype"
 )
 
 func main() {

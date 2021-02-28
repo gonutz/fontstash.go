@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/gonutz/fontstash.go/truetype"
 	"io/ioutil"
 	"path/filepath"
+
+	"github.com/gonutz/fontstash.go/truetype"
 )
 
 func main() {

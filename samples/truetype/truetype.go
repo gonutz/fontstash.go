@@ -1,13 +1,15 @@
 package main
 
 import (
-	"github.com/go-gl/gl/v2.1/gl"
-	"github.com/go-gl/glfw/v3.1/glfw"
-	"github.com/gonutz/fontstash.go/truetype"
 	"io/ioutil"
 	"path/filepath"
 	"runtime"
 	"unsafe"
+
+	"github.com/gonutz/gl/v2.1/gl"
+	"github.com/gonutz/glfw/v3.1/glfw"
+
+	"github.com/gonutz/fontstash.go/truetype"
 )
 
 func main() {
